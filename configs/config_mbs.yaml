@@ -1,0 +1,43 @@
+
+data: 
+  csv_path: 
+  H: 720
+  W: 1280
+  initial_len:  3000
+  window_len: 2700
+
+dbscan: 
+  eps: 10
+  min_samples: 15
+  time_scale: 0.0005 
+
+save_video_p:
+  save_video: False
+  fps: 10
+  out_path: "debug_tracking.mp4"
+
+kalman:
+  sort:
+    max_distance: 300
+    t_found: 2
+    t_lost: 5
+  initial_uncertainty_P:
+    x: 10
+    y: 10
+    area: 100
+    vx: 100
+    vy: 100
+    varea: 1000
+
+  process_noise_Q:
+    x: 20
+    y: 20
+    area: 100
+    vx: 50
+    vy: 50
+    varea: 300
+
+  measurement_noise_R:
+    x: 1
+    y: 1
+    area: 200
