@@ -15,7 +15,7 @@ H, W = cfg["data"]["H"], cfg["data"]["W"]
 initial_len =  cfg["data"]["initial_len"]
 window_len = cfg["data"]["window_len"]
 
-
+#
 eps = cfg["dbscan"]["eps"]
 min_samples = cfg["dbscan"]["min_samples"]
 time_scale = cfg["dbscan"]["time_scale"]
