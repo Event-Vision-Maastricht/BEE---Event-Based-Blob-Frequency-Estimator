@@ -5,17 +5,16 @@ from utils import *
 from tracker import *
 from config import cfg
 
+#event processing
 csv_path = cfg["data"]["csv_path"]
+#change this for your csv if needed, currently skips first row to handle both csvs with header and no header, but skips first events if there is no header 
 events_df = pd.read_csv(csv_path, skiprows=1, header=None, names=['x','y','p','t'])
 events = events_df[['x','y','p','t']].values
 H, W = cfg["data"]["H"], cfg["data"]["W"]
 
-#initial_len =  1700
-#window_len = 1650
 initial_len =  cfg["data"]["initial_len"]
 window_len = cfg["data"]["window_len"]
-#overlap = initial_len-window_len
-#time_step=window_len-overlap
+
 
 eps = cfg["dbscan"]["eps"]
 min_samples = cfg["dbscan"]["min_samples"]
@@ -30,6 +29,7 @@ t0 = t_first
 t1 = t_first+ initial_len
 paused = False
 colours = {}
+freq={}
 tracker = Tracker(max_distance =cfg["kalman"]["sort"]["max_distance"], t_found=cfg["kalman"]["sort"]["t_found"],t_lost=cfg["kalman"]["sort"]["t_lost"])
 #---
 #max_distance =cfg["kalman"]["sort"]["max_distance"]
@@ -40,7 +40,7 @@ if save_video:
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     video_writer = cv2.VideoWriter(out_path, fourcc, fps, (W, H))
 
-
+#-----------main loop processing events 
 while t0 < t_last:
         # get og events 
         id_f = np.searchsorted(time_stamps, t0, side='left')
@@ -67,20 +67,30 @@ while t0 < t_last:
         measurment_to_track_dict = tracker.update_tracks(measurements,t0) 
         #a dictionary 
         #-----------Kalman
-        #-----------Tracks
-        persistent_labels = clusters.copy()
-
+        #-----------Tracks 
+        persistent_labels = np.full_like(clusters, -1)
+        
         for cluster_id, track_id in measurment_to_track_dict:
+            #persistance of tracks trough random labeles from DBSCAN
             persistent_labels[clusters == cluster_id] = track_id
-        #tracked_clusters = tracker.clusters()
-        centroids = tracker.get_all_centroids()
+            #frequency
         #-----------Tracks
-        #-----------Freq
-        #TODO: push code for frequency estimation 
-        #-----------Freq
+        unique_c = np.unique(persistent_labels)
+        #-----------Update frequency
+        for cluster  in unique_c:
+            if cluster  == -1:
+                continue
+            c_events = frame_events[persistent_labels == cluster]
+            track_id, max_freq =tracker.track_update_freq(cluster,c_events,cfg["frequency"]["box_shift"])
+            #frequency 
+            freq[track_id]= max_freq
+        #-----------Update frequency
+
+
+        centroids = tracker.get_all_centroids()
         
-        
-        event_frame_dt = visualizator3(frame_events,persistent_labels,centroids,colours)
+        #------------intuatie visualization
+        event_frame_dt = visualizator3(frame_events,persistent_labels,centroids,colours,freq)
         #save video if needed 
         if save_video:
             video_writer.write(event_frame_dt)
@@ -101,6 +111,8 @@ while t0 < t_last:
        
         t0 += window_len
         t1 += window_len
+        #------------intuatie visualization
+#---------end of main loop processing events 
 if save_video:
     video_writer.release()
 cv2.destroyAllWindows()

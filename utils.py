@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import yaml
 
+#important functions, related to calculations and visualization 
 def visualizator2(events):
     frame =  np.zeros((720,1280,3), dtype=np.uint8)
     for event in events:
@@ -11,22 +12,27 @@ def visualizator2(events):
         else:
             frame[y,x,0]=255
 
-def visualizator3(events, cluster_labels,centroids, colours):
+def visualizator3(events, cluster_labels,centroids, colours,freq):
     unique_clusters = np.unique(cluster_labels)
     colours = generate_cluster_colors( unique_clusters,colours)
     frame = np.zeros((720, 1280, 3), dtype=np.uint8)
-
+    
     for event, label in zip(events, cluster_labels):
         x, y, polarity, timestamp = event
         if label == -1:
             frame[y, x] = [255, 255, 255]   
         else:
-            frame[y, x] = colours[label]    
+            frame[y, x] = colours[label] 
+         
 
-    for cx, cy in centroids:
+    for cx, cy, id in centroids:
         cx = int(cx)
         cy = int(cy)
+        max_freq = freq[id] 
         cv2.circle( frame,(cx, cy),1,(0, 255, 255),-1 )
+        cv2.putText(frame, f"{max_freq}", (cx+20, cy+20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+    
 
     return frame
         
@@ -102,7 +108,9 @@ def get_area(events):
     return a
 
 def get_measurment(cluster): 
-    x, y = get_centroid_iqr(cluster,k=1)
+    #x, y = get_centroid_iqr(cluster,k=0.5)
+    #x, y = get_centroid_trimmed(cluster, trim_percent=0.1)
+    x, y = get_centroid(cluster)
     a = get_area(cluster)
     return x,y,a
 
@@ -145,3 +153,13 @@ def generate_cluster_colors(unique_clusters, colours):
 
     return colours
 
+def centered_events(events, centroid_x, centroid_y, shift=60):
+    events_c = events.copy()
+
+    shift_x = centroid_x - shift
+    shift_y = centroid_y - shift
+
+    events_c[:, 0] = events_c[:, 0] - shift_x
+    events_c[:, 1] = events_c[:, 1] - shift_y
+
+    return events_c

@@ -2,6 +2,9 @@ from sortb import *
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial import distance_matrix
 
+from utils import centered_events
+
+#Tracker class that manages all tracks
 class Tracker:
 
     def __init__(self, max_distance =50,t_found =3,t_lost=5 ):
@@ -14,15 +17,18 @@ class Tracker:
     def get_tracks(self):
         return self.tracks 
     
+    def get_track(self, track_id):
+        for track in self.tracks:
+            if track.id == track_id:
+                return track
+        return None
+    
     def get_all_centroids(self):
 
         if len(self.tracks) == 0:
             return np.empty((0, 2))
 
-        return np.array([
-            track.get_centroid()
-            for track in self.tracks
-        ])
+        return np.array([[ *track.get_centroid(), track.id] for track in self.tracks])
      
 
     def add_track(self, measurement, current_t):
@@ -88,7 +94,8 @@ class Tracker:
             self.tracks[track_idx].missed = 0
             self.tracks[track_idx].hits += 1
             if self.tracks[track_idx].hits >self.t_found:
-                measurment_to_track_dict.append([meas_idx,self.tracks[track_idx].id])
+                cluster_id = int(measurments[meas_idx][0])
+                measurment_to_track_dict.append([cluster_id,self.tracks[track_idx].id])
             
         for track_idx in unmatched_tracks:
             self.tracks[track_idx].missed += 1
@@ -103,6 +110,15 @@ class Tracker:
             ]
         
         return measurment_to_track_dict
+    
+    def track_update_freq(self, track_id,events,shift):
+        track = self.get_track(track_id)
+        track_x,track_y = track.get_centroid()
+        c_events = centered_events(events,track_x,track_y,shift = shift)
+            
+        max_freq = track.update_freq(c_events,size_w=shift*2,size_h=shift*2)
+
+        return track_id, max_freq
         
        
 

@@ -3,10 +3,10 @@ data:
   csv_path: 
   H: 720
   W: 1280
-  initial_len:  3000
-  window_len: 2700
-  #initial_len:  2000
-  #window_len: 1667
+  #initial_len:  3000
+  #window_len: 2700
+  initial_len:  1667
+  window_len: 1667
   #initial_len:  30000
   #window_len: 27000
 
@@ -25,29 +25,30 @@ kalman:
     max_distance: 300
     t_found: 4
     t_lost: 12
+
   initial_uncertainty_P:
-    x: 10
-    y: 10
-    area: 100
-    vx: 100
-    vy: 100
-    varea: 1000
+    x: 25
+    y: 25
+    area: 500
+    vx: 500
+    vy: 500
+    varea: 2000
 
   process_noise_Q:
-    x: 20
-    y: 20
-    area: 100
-    vx: 50
-    vy: 50
-    varea: 300
+    x: 5
+    y: 5
+    area: 50
+    vx: 120
+    vy: 120
+    varea: 200
 
   measurement_noise_R:
-    x: 1
-    y: 1
-    area: 200
+    x: 30
+    y: 30
+    area: 300
 
 frequency:
     box_shift: 200
-    min_freq: 200
-    max_freq: 300
+    min_freq: 150
+    max_freq: 350
     freq_res: 1

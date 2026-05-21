@@ -1,5 +1,8 @@
 import numpy as np 
 from config import cfg
+from freqa import freqEBFM
+
+#kalman filter/object version of a track
 class Sortb: 
 
     def update_F(self, dt):
@@ -17,6 +20,8 @@ class Sortb:
         self.t_last = t
         self.missed = 0
         self.hits = 1
+        self.ebfm = None
+        self.max_freq=0
         #state
         self.X = np.array([
             [x],
@@ -79,6 +84,11 @@ class Sortb:
 
     def get_area(self):
         return self.X[2, 0]
+    
+    def update_freq(self, events,size_w,size_h):
+        self.max_freq, self.embf = freqEBFM(events, size_w,size_h, min_freq=cfg["frequency"]["min_freq"],max_freq=cfg["frequency"]["max_freq"],freq_res= cfg["frequency"]["freq_res"],ebfm=self.ebfm)
+        return self.max_freq
+
     
 
 
