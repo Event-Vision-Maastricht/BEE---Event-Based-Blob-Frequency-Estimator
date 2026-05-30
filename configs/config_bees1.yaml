@@ -1,5 +1,5 @@
 data: 
-  csv_path: 
+  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\bees.csv"
   H: 720
   W: 1280
   initial_len:  1667

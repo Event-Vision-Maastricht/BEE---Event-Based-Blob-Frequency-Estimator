@@ -86,8 +86,8 @@ while t0 < t_last:
             freq[track_id]= max_freq
         #-----------Update frequency
 
-
         centroids = tracker.get_all_centroids()
+        
         
         #------------intuatie visualization
         event_frame_dt = visualizator3(frame_events,persistent_labels,centroids,colours,freq)
@@ -111,7 +111,7 @@ while t0 < t_last:
        
         t0 += window_len
         t1 += window_len
-        #------------intuatie visualization
+        #------------intuitive visualization
 #---------end of main loop processing events 
 if save_video:
     video_writer.release()

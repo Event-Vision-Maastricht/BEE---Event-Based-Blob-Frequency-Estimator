@@ -1,6 +1,6 @@
 
 data: 
-  csv_path: 
+  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\events_mason_bees_5.csv"
   H: 720
   W: 1280
   #initial_len:  3000

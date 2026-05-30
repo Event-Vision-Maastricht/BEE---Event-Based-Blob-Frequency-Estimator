@@ -86,7 +86,7 @@ class Sortb:
         return self.X[2, 0]
     
     def update_freq(self, events,size_w,size_h):
-        self.max_freq, self.embf = freqEBFM(events, size_w,size_h, min_freq=cfg["frequency"]["min_freq"],max_freq=cfg["frequency"]["max_freq"],freq_res= cfg["frequency"]["freq_res"],ebfm=self.ebfm)
+        self.max_freq, self.ebfm = freqEBFM(events, size_w,size_h, min_freq=cfg["frequency"]["min_freq"],max_freq=cfg["frequency"]["max_freq"],freq_res= cfg["frequency"]["freq_res"],ebfm=self.ebfm)
         return self.max_freq
 
     

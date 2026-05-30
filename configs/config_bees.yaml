@@ -1,5 +1,5 @@
 data: 
-  csv_path: 
+  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\bees.csv"
   H: 720
   W: 1280
   initial_len:  1667
@@ -43,7 +43,7 @@ kalman:
     area: 200
 
 frequency:
-    box_shift: 50
-    min_freq: 200
-    max_freq: 300
+    box_shift: 25
+    min_freq: 100
+    max_freq: 350
     freq_res: 1

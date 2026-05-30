@@ -1,8 +1,9 @@
 from sortb import *
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial import distance_matrix
-
+import os
 from utils import centered_events
+from config import cfg
 
 #Tracker class that manages all tracks
 class Tracker:
@@ -115,7 +116,6 @@ class Tracker:
         track = self.get_track(track_id)
         track_x,track_y = track.get_centroid()
         c_events = centered_events(events,track_x,track_y,shift = shift)
-            
         max_freq = track.update_freq(c_events,size_w=shift*2,size_h=shift*2)
 
         return track_id, max_freq
