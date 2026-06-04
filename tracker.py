@@ -25,11 +25,17 @@ class Tracker:
         return None
     
     def get_all_centroids(self):
+        visible_tracks = [
+            track for track in self.tracks
+            if track.hits >= self.t_found
+            and track.max_mag > cfg["frequency"]["mag_tresh"]
+            and track.missed <= self.t_lost
+        ]
 
-        if len(self.tracks) == 0:
-            return np.empty((0, 2))
+        if len(visible_tracks) == 0:
+            return np.empty((0, 3))
 
-        return np.array([[ *track.get_centroid(), track.id] for track in self.tracks])
+        return np.array([[*track.get_centroid(), int(track.id)]for track in visible_tracks])
      
 
     def add_track(self, measurement, current_t):
@@ -70,55 +76,77 @@ class Tracker:
 
         return matched, unmatched_tracks, unmatched_measurements
 
-
-
     
-    def update_tracks(self, measurments, current_t):
-        measurment_to_track_dict =[]
+    def update_tracks(self, measurments, current_t, frame_events, clusters, box_shift):
+        measurment_to_track_dict = []
+        freq = {}
+
         if len(self.tracks) == 0:
             for measurement in measurments:
                 self.add_track(measurement, current_t)
-                cluster_id = int(measurement[0])
-                track_id = self.tracks[-1].id
-                
-                measurment_to_track_dict.append([cluster_id, track_id])
-            return measurment_to_track_dict
-        
+            return [], freq
+
         for track in self.tracks:
             track.predict(current_t)
-        
+
         matched, unmatched_tracks, unmatched_measurements = self.hun_matching(measurments)
-      
+
         for track_idx, meas_idx in matched:
-            z = measurments[meas_idx][1:4] 
+            z = measurments[meas_idx][1:4]
             self.tracks[track_idx].update(z)
             self.tracks[track_idx].missed = 0
             self.tracks[track_idx].hits += 1
-            if self.tracks[track_idx].hits >self.t_found:
-                cluster_id = int(measurments[meas_idx][0])
-                measurment_to_track_dict.append([cluster_id,self.tracks[track_idx].id])
-            
+
+            cluster_id = int(measurments[meas_idx][0])
+            track_id = int(self.tracks[track_idx].id)
+
+            c_events = frame_events[clusters == cluster_id]
+
+            track_id, max_freq, max_mag = self.track_update_freq(track_id,c_events,box_shift)
+
+            self.tracks[track_idx].max_freq = max_freq
+            self.tracks[track_idx].max_mag = max_mag
+
+            if self.tracks[track_idx].hits >= self.t_found and max_mag > cfg["frequency"]["mag_tresh"]:
+                measurment_to_track_dict.append([cluster_id, track_id])
+                #freq[track_id] = max_freq
+
         for track_idx in unmatched_tracks:
             self.tracks[track_idx].missed += 1
 
         for meas_idx in unmatched_measurements:
             self.add_track(measurments[meas_idx], current_t)
-            measurment_to_track_dict.append([measurments[meas_idx][0],self.tracks[-1].id])
 
         self.tracks = [
             track for track in self.tracks
             if track.missed <= self.t_lost
-            ]
-        
-        return measurment_to_track_dict
+        ]
+
+        active_ids = {int(track.id) for track in self.tracks}
+
+        measurment_to_track_dict = [
+            [cluster_id, track_id]
+            for cluster_id, track_id in measurment_to_track_dict
+            if int(track_id) in active_ids
+        ]
+
+        freq = {
+            int(track.id): track.max_freq
+            for track in self.tracks
+            if track.hits >= self.t_found
+            and track.max_mag > cfg["frequency"]["mag_tresh"]
+            and track.missed <= self.t_lost
+        }
+
+        return measurment_to_track_dict, freq
     
     def track_update_freq(self, track_id,events,shift):
         track = self.get_track(track_id)
         track_x,track_y = track.get_centroid()
         c_events = centered_events(events,track_x,track_y,shift = shift)
-        max_freq = track.update_freq(c_events,size_w=shift*2,size_h=shift*2)
+        max_freq, max_mag = track.update_freq(c_events,size_w=shift*2,size_h=shift*2)
 
-        return track_id, max_freq
+        return track_id, max_freq, max_mag
         
        
 

@@ -24,13 +24,13 @@ def visualizator3(events, cluster_labels,centroids, colours,freq):
         else:
             frame[y, x] = colours[label] 
          
-
-    for cx, cy, id in centroids:
-        cx = int(cx)
-        cy = int(cy)
-        max_freq = freq[id] 
-        cv2.circle( frame,(cx, cy),1,(0, 255, 255),-1 )
-        cv2.putText(frame, f"{max_freq}", (cx+20, cy+20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    if centroids.size != 0: 
+        for cx, cy, id in centroids:
+            cx = int(cx)
+            cy = int(cy)
+            max_freq = freq[id] 
+            cv2.circle( frame,(cx, cy),1,(0, 255, 255),-1 )
+            cv2.putText(frame, f"{max_freq}", (cx+20, cy+20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
     
 

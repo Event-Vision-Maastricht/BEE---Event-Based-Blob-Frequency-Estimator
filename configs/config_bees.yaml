@@ -6,9 +6,9 @@ data:
   window_len: 1667
 
 dbscan: 
-  eps: 8
-  min_samples: 5
-  time_scale: 0.0005 
+  eps: 5
+  min_samples: 3
+  time_scale: 0.001
 
 save_video_p:
   save_video: False
@@ -17,33 +17,37 @@ save_video_p:
 
 kalman:
   sort:
-    max_distance: 50
-    t_found: 2
-    t_lost: 5
+    max_distance: 30
+    t_found: 3
+    t_lost: 4
 
   initial_uncertainty_P:
     x: 10
     y: 10
-    area: 100
-    vx: 100
-    vy: 100
-    varea: 1000
+    area: 500
+    vx: 500
+    vy: 500
+    varea: 2000
 
   process_noise_Q:
-    x: 20
-    y: 20
-    area: 100
-    vx: 50
-    vy: 50
-    varea: 300
+    x: 2.5
+    y: 2.5
+    area: 50
+    vx: 120
+    vy: 120
+    varea: 200
 
   measurement_noise_R:
-    x: 1
-    y: 1
-    area: 200
+    #2
+    x: 2
+    y: 2
+    area: 100
 
 frequency:
     box_shift: 25
-    min_freq: 100
-    max_freq: 350
-    freq_res: 1
+    min_freq: 150
+    max_freq: 300
+    freq_res: 0.1
+    #used to reject noise, blobs with weak frequency signal(magnitude)
+    mag_tresh: 7
+    

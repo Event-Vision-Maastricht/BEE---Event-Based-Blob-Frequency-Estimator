@@ -4,6 +4,7 @@ from sklearn.cluster import DBSCAN
 from utils import *
 from tracker import *
 from config import cfg
+import csv
 
 #event processing
 csv_path = cfg["data"]["csv_path"]
@@ -64,30 +65,18 @@ while t0 < t_last:
         measurements = get_all_measurements(frame_events, clusters)
         #-----------Measurments
         #-----------Kalman
-        measurment_to_track_dict = tracker.update_tracks(measurements,t0) 
+        #measurment_to_track_dict = tracker.update_tracks(measurements,t0,frame_events,clusters) 
+        measurment_to_track_dict, freq = tracker.update_tracks( measurements,t0, frame_events,clusters,cfg["frequency"]["box_shift"])
         #a dictionary 
         #-----------Kalman
         #-----------Tracks 
         persistent_labels = np.full_like(clusters, -1)
-        
-        for cluster_id, track_id in measurment_to_track_dict:
-            #persistance of tracks trough random labeles from DBSCAN
-            persistent_labels[clusters == cluster_id] = track_id
-            #frequency
-        #-----------Tracks
-        unique_c = np.unique(persistent_labels)
-        #-----------Update frequency
-        for cluster  in unique_c:
-            if cluster  == -1:
-                continue
-            c_events = frame_events[persistent_labels == cluster]
-            track_id, max_freq =tracker.track_update_freq(cluster,c_events,cfg["frequency"]["box_shift"])
-            #frequency 
-            freq[track_id]= max_freq
-        #-----------Update frequency
+        if measurment_to_track_dict:
+            for cluster_id, track_id in measurment_to_track_dict:
+                #persistance of tracks trough random labeles from DBSCAN
+                persistent_labels[clusters == cluster_id] = track_id
 
         centroids = tracker.get_all_centroids()
-        
         
         #------------intuatie visualization
         event_frame_dt = visualizator3(frame_events,persistent_labels,centroids,colours,freq)

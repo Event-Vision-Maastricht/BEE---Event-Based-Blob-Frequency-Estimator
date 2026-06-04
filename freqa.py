@@ -1,14 +1,5 @@
 import numpy as np
-#frequency algorithms
-
-    #def freqFFTcount():
-    #    return 
-
-    #def freqFFTarea():
-    #    return 
-
-    #def freqSTFFT():
-    #    return 
+#Event Based Frequency Mapping algorithm, used to update frequency per blob 
 
 def freqEBFM(events, width,height, min_freq=200,max_freq=300,freq_res= 1,ebfm=None):
     f=np.arange(min_freq, max_freq,freq_res,dtype=np.float32)
@@ -29,12 +20,8 @@ def freqEBFM(events, width,height, min_freq=200,max_freq=300,freq_res= 1,ebfm=No
     ebfm_max = np.argmax(ebfm_abs, axis=2)
     flat_idx = np.argmax(ebfm_abs)
     y_max, x_max, f_idx = np.unravel_index(flat_idx, ebfm_abs.shape)
-    ebfm_max +=min_freq
-    cur_max_freq= ebfm_max[y_max,x_max]
+    cur_max_freq = round(float(f[f_idx]),2)
+    max_mag = float(ebfm_abs[y_max, x_max, f_idx])
 
-
-    return cur_max_freq, ebfm
+    return cur_max_freq, ebfm, max_mag
     
-    
-    #def freqFFTPCA(): #???
-    #    return 

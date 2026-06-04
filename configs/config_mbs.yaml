@@ -1,12 +1,13 @@
 
 data: 
-  csv_path: 
+  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\bee_3.csv"
   H: 720
   W: 1280
-  initial_len:  3000
-  window_len: 2700
-  #initial_len:  2000
-  #window_len: 1667
+  #initial_len:  3000
+  #window_len: 2700
+  #window_len: 2700
+  initial_len:  1667
+  window_len: 1667
   #initial_len:  30000
   #window_len: 27000
 
