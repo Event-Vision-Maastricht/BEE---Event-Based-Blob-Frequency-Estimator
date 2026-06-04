@@ -29,7 +29,6 @@ configs
 
 [2] Aitsam, M., Goyal, G., Bartolozzi, C., & Di Nuovo, A. (2024). *Vibration Vision: Real-Time Machinery Fault Diagnosis with Event Cameras*. In *Proceedings of ECCV-NeVi Workshop*.
 
-[3] F. Hamann, S. Ghosh, I. J. Martínez, T. Hart, A. Kacelnik, and G. Gallego, *Fourier‐Based Action Recognition for Wildlife Behavior Quantification with Event Cameras,* Advanced Intelligent Systems, vol. 7, no. 2, Nov. 2024, doi: 10.1002/aisy.202400353.
-
+[3] A. Apps, Z. Wang, V. Perejogin, T. Molloy, and R. Mahony, *Asynchronous Multi-Object Tracking with an Event Camera,* arXiv (Cornell University), May 2025, doi: 10.48550/arxiv.2505.08126.
 
 
