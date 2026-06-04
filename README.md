@@ -19,7 +19,7 @@ Implementing Event-Based Frequency Mapping(EBFM)[2]
 - PyYAML
 - coded on Python 3.12.3
 
-configs
+### Configs
 - congig_bees.yaml fine tuned for Bee Swarm Dataset[3] 
 - config_mbs.yaml fine tuned for custom dataset gathered for this project 
 
