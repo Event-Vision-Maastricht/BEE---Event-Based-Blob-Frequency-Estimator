@@ -1,6 +1,8 @@
 import numpy as np 
 import cv2
 import yaml
+import csv
+from config import cfg
 
 #important functions, related to calculations and visualization 
 def visualizator2(events):
@@ -16,7 +18,18 @@ def visualizator3(events, cluster_labels,centroids, colours,freq):
     unique_clusters = np.unique(cluster_labels)
     colours = generate_cluster_colors( unique_clusters,colours)
     frame = np.zeros((720, 1280, 3), dtype=np.uint8)
+
     
+    with open("detected_tracks.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+
+        for event, label in zip(events, cluster_labels):
+            if label == -1:
+                continue
+
+            x, y, polarity, timestamp = event
+            writer.writerow([x, y, polarity, timestamp ,label])
+        
     for event, label in zip(events, cluster_labels):
         x, y, polarity, timestamp = event
         if label == -1:
@@ -30,7 +43,7 @@ def visualizator3(events, cluster_labels,centroids, colours,freq):
             cy = int(cy)
             max_freq = freq[id] 
             cv2.circle( frame,(cx, cy),1,(0, 255, 255),-1 )
-            cv2.putText(frame, f"{max_freq}", (cx+20, cy+20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(frame, f"{max_freq}", (cx+15, cy+15), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     
 
