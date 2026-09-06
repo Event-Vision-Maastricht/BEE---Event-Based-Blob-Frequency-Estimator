@@ -1,5 +1,6 @@
 data: 
-  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\bee_1.csv"
+  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\mason_bees\\events_mason_bees_2.csv"
+  file_name: "events_mason_bees_2"
   H: 720
   W: 1280
   initial_len:  1667
@@ -12,7 +13,7 @@ dbscan:
   time_scale: 0.0005 
 
 save_video_p:
-  save_video: True
+  save_video: False
   save_tracks_events: True
   fps: 10
   out_path: "debug_tracking.mp4"
@@ -47,6 +48,6 @@ kalman:
 frequency:
     box_shift: 200
     min_freq: 150
-    max_freq: 350
+    max_freq: 300
     freq_res: 0.1
     mag_tresh: 0

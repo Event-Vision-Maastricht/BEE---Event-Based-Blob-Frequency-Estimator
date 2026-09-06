@@ -8,7 +8,7 @@ from config import cfg
 def visualizator2(events):
     frame =  np.zeros((720,1280,3), dtype=np.uint8)
     for event in events:
-        x,y,polarity,timestamp = event
+        x,y,polarity,timestamp, *rest = event
         if polarity ==1:
             frame[y,x,2]=255
         else:
@@ -18,7 +18,9 @@ def visualizator3(events, cluster_labels,centroids, colours,freq):
     unique_clusters = np.unique(cluster_labels)
     colours = generate_cluster_colors( unique_clusters,colours)
     frame = np.zeros((720, 1280, 3), dtype=np.uint8)
-
+    x, y, polarity, timestamp, *rest = events[0]
+    
+    cv2.putText(frame, f"{timestamp}us", (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     
     with open("detected_tracks.csv", "a", newline="") as f:
         writer = csv.writer(f)
@@ -27,11 +29,11 @@ def visualizator3(events, cluster_labels,centroids, colours,freq):
             if label == -1:
                 continue
 
-            x, y, polarity, timestamp = event
+            x, y, polarity, timestamp, *rest = event
             writer.writerow([x, y, polarity, timestamp ,label])
         
     for event, label in zip(events, cluster_labels):
-        x, y, polarity, timestamp = event
+        x, y, polarity, timestamp,*rest = event
         if label == -1:
             frame[y, x] = [255, 255, 255]   
         else:
@@ -44,6 +46,54 @@ def visualizator3(events, cluster_labels,centroids, colours,freq):
             max_freq = freq[id] 
             cv2.circle( frame,(cx, cy),1,(0, 255, 255),-1 )
             cv2.putText(frame, f"{max_freq}", (cx+15, cy+15), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+    
+
+    return frame
+
+def visualizator3(events, cluster_labels,centroids, colours,freq,mag):
+    unique_clusters = np.unique(cluster_labels)
+    colours = generate_cluster_colors( unique_clusters,colours)
+    frame = np.zeros((720, 1280, 3), dtype=np.uint8)
+    x, y, polarity, timestamp, *rest = events[0]
+    window_stamp = timestamp
+    cv2.putText(frame, f"{window_stamp}us", (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+    
+    with open(cfg["data"]["file_name"]+"_detected_tracks_t.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+
+        for event, label in zip(events, cluster_labels):
+            if label == -1:
+                continue
+
+            x, y, polarity, timestamp, *rest = event
+            writer.writerow([x, y, polarity, timestamp ,label])
+        
+    for event, label in zip(events, cluster_labels):
+        x, y, polarity, timestamp,*rest = event
+        if label == -1:
+            frame[y, x] = [255, 255, 255]   
+        else:
+            frame[y, x] = colours[label] 
+         
+    if centroids.size != 0: 
+        #with open(cfg["data"]["file_name"]+"_fa.csv", "a", newline="") as f:
+         with open(cfg["data"]["file_name"]+"_cluster_centroids_t.csv", "a", newline="") as f1, \
+              open(cfg["data"]["file_name"]+"_f_t.csv", "a", newline="") as f2:
+            writer1 = csv.writer(f1)
+            writer2 = csv.writer(f2)
+            writer = csv.writer(f)
+            for cx, cy, id in centroids:
+                cx = int(cx)
+                cy = int(cy)
+                max_freq = freq[id]
+                max_mag = mag[id] 
+                #writer.writerow([window_stamp,id,max_freq,max_mag])
+                #writer.writerow([window_stamp,id,cx,cy])
+                writer1.writerow([window_stamp, id, cx, cy])
+                writer2.writerow([window_stamp, id, max_freq, max_mag])
+                cv2.circle( frame,(cx, cy),1,(0, 255, 255),-1 )
+                cv2.putText(frame, f"{max_freq};{max_mag:.3f}", (cx+15, cy+15), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     
 

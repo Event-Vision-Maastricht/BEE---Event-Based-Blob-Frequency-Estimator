@@ -80,11 +80,12 @@ class Tracker:
     def update_tracks(self, measurments, current_t, frame_events, clusters, box_shift):
         measurment_to_track_dict = []
         freq = {}
+        mag ={}
 
         if len(self.tracks) == 0:
             for measurement in measurments:
                 self.add_track(measurement, current_t)
-            return [], freq
+            return [], freq,mag
 
         for track in self.tracks:
             track.predict(current_t)
@@ -138,7 +139,15 @@ class Tracker:
             and track.missed <= self.t_lost
         }
 
-        return measurment_to_track_dict, freq
+        mag = {
+            int(track.id): track.max_mag
+            for track in self.tracks
+            if track.hits >= self.t_found
+            and track.max_mag > cfg["frequency"]["mag_tresh"]
+            and track.missed <= self.t_lost
+        }
+
+        return measurment_to_track_dict, freq, mag
     
     def track_update_freq(self, track_id,events,shift):
         track = self.get_track(track_id)

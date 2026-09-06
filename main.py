@@ -9,8 +9,11 @@ import csv
 #event processing
 csv_path = cfg["data"]["csv_path"]
 #change this for your csv if needed, currently skips first row to handle both csvs with header and no header, but skips first events if there is no header 
-events_df = pd.read_csv(csv_path, skiprows=1, header=None, names=['x','y','p','t'])
+#events_df = pd.read_csv(csv_path, skiprows=1, header=None, names=['x','y','p','t'])
+events_df = pd.read_csv(csv_path, skiprows=1, header=None, names=['x','y','t','p'])
 events = events_df[['x','y','p','t']].values
+#events_df = pd.read_csv(csv_path, skiprows=1, header=None, names=['x','y','p','t','ys','yi'])
+#events = events_df[['x','y','p','t','ys','yi']].values
 H, W = cfg["data"]["H"], cfg["data"]["W"]
 
 initial_len =  cfg["data"]["initial_len"]
@@ -66,7 +69,7 @@ while t0 < t_last:
         #-----------Measurments
         #-----------Kalman
         #measurment_to_track_dict = tracker.update_tracks(measurements,t0,frame_events,clusters) 
-        measurment_to_track_dict, freq = tracker.update_tracks( measurements,t0, frame_events,clusters,cfg["frequency"]["box_shift"])
+        measurment_to_track_dict, freq, mag = tracker.update_tracks( measurements,t0, frame_events,clusters,cfg["frequency"]["box_shift"])
         #a dictionary 
         #-----------Kalman
         #-----------Tracks 
@@ -79,7 +82,7 @@ while t0 < t_last:
         centroids = tracker.get_all_centroids()
         
         #------------intuatie visualization
-        event_frame_dt = visualizator3(frame_events,persistent_labels,centroids,colours,freq)
+        event_frame_dt = visualizator3(frame_events,persistent_labels,centroids,colours,freq, mag)
         #save video if needed 
         if save_video:
             video_writer.write(event_frame_dt)

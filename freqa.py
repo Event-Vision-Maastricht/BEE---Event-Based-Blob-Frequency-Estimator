@@ -10,7 +10,7 @@ def freqEBFM(events, width,height, min_freq=200,max_freq=300,freq_res= 1,ebfm=No
     t_sec = events[:, 3:4] * 1e-6
     exponents = np.exp(-1j*w*t_sec).astype(np.complex64)
     for i,event in enumerate(events):
-        x,y,p,t = event
+        x,y,p,t, *rest = event
         try:
             ebfm[y, x, :] += exponents[i]
         except: 

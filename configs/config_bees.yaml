@@ -1,5 +1,6 @@
 data: 
-  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\bees.csv"
+  csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\background_only.csv"
+  #csv_path: "C:\\Users\\user\\Documents\\Uni Materials 3\\Blob Frequency Extractor\\insect_combined\\full_trajectories\\all_bees\\13_bee_pts1692_start12317637.csv"
   H: 720
   W: 1280
   initial_len:  1667
@@ -11,7 +12,7 @@ dbscan:
   time_scale: 0.001
 
 save_video_p:
-  save_video: True
+  save_video: False
   save_tracks_events: True
   fps: 10
   out_path: "debug_tracking.mp4"
